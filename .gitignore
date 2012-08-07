@@ -2,7 +2,7 @@
 ###################
 *.com
 *.class
-*.dll
+#*.dll
 *.exe
 *.o
 *.so
@@ -36,3 +36,10 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+
+# repertoires #
+###############
+ext/*
+#inc/Aurora
+#inc/Box2D
+#inc/Thor
