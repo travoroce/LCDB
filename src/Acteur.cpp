@@ -42,9 +42,9 @@ void Acteur::deplacer( float p_x, float p_y )
 	{
        // m_body->ApplyForceToCenter( b2Vec2( p_x, p_y ) );
         //m_bodyDef.position.Set( p_x, p_y );
-        m_body->SetTransform( m_body->GetPosition()+b2Vec2( p_x, p_y ), m_body->GetAngle()+0.0f );
+        m_body->SetTransform( m_body->GetPosition()+b2Vec2( PixelParMetres(p_x), PixelParMetres(p_y) ), m_body->GetAngle()+0.0f );
         
-        std::cout<<m_body->GetPosition().x<<std::endl;
+        std::cout<< PixelParMetres(m_body->GetPosition().x) << ", " << m_body->GetPosition().x<<std::endl;
 		//m_sprite.move( p_x, p_y );
 	}		
 		
@@ -55,7 +55,7 @@ sf::IntRect Acteur::rectangleTexture() const
 void Acteur::rectangleTexture( sf::IntRect p_rectangle )
 	{
 		m_sprite.setTextureRect( p_rectangle );
-        m_dynamicBox.SetAsBox(m_sprite.getTextureRect().width, m_sprite.getTextureRect().height); 
+        m_dynamicBox.SetAsBox(PixelParMetres(m_sprite.getTextureRect().width), PixelParMetres(m_sprite.getTextureRect().height)); 
 	}
 	
 
@@ -187,7 +187,7 @@ void Acteur::animer( sf::Time p_duree )
 	{
 		m_animator.update( p_duree );
 		m_animator.animate( m_sprite );
-        m_dynamicBox.SetAsBox( this->rectangleTexture().width, this->rectangleTexture().height );
+        m_dynamicBox.SetAsBox( PixelParMetres(this->rectangleTexture().width), PixelParMetres(this->rectangleTexture().height) );
 	}
 	
 void Acteur::animationDefaut( std::string p_nom, float p_duree )
@@ -217,6 +217,12 @@ void Acteur::maj()
 		this->animer( sf::seconds( 1/60.0f ) );
             b2Vec2 position = m_body->GetPosition(); 
            // float32 angle = m_body->GetAngle(); 
-            this->position( sf::Vector2f( position.x, (400-position.y)-this->rectangleTexture().height ) );
+            this->position( sf::Vector2f( position.x, (400-position.y)-PixelParMetres(this->rectangleTexture().height) ) );
 
     }
+	
+const b2Body* Acteur::corps() const
+	{
+		return m_body;
+	}
+	

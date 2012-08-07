@@ -69,10 +69,15 @@ int main()
 	window.setKeyRepeatEnabled(false);
 
 	// Instruction text
-	sf::Text instructions(
-		"Droite/Gauche:  Marche droite/gauche\n"
-		"Bas: s'accroupir\n"
-		"Echap:  Quit");
+	sf::Font font;
+		font.loadFromFile( "res/UnZialish.ttf" );
+		
+	std::string	texteInstruction = "Droite/Gauche:  Marche droite/gauche\n"
+								   "Bas: s'accroupir\n"
+								   "Echap:  Quit";
+	sf::Text instructions( texteInstruction, font, 30);
+		
+
 	instructions.setCharacterSize(12);
 	instructions.setColor(sf::Color::White);
 
@@ -176,8 +181,6 @@ int main()
                         }
 						deplacement = false;
                         break;
-					case sf::Keyboard::Up:	
-
 					case sf::Keyboard::Down:	
                         if ( direction >= 0 )
                         {
@@ -185,7 +188,7 @@ int main()
 							bidule->animationDefaut( "PoseD"+suffixe_bidule, 1.0f );
                         }
                         else
-                        {std::cout << "UPG" << std::endl;
+                        {
 							bidule->jouerAnimation( "AccroupiG_up"+suffixe_bidule, false );	
 							bidule->animationDefaut( "PoseG"+suffixe_bidule, 1.0f );
                         }
@@ -221,14 +224,28 @@ int main()
         std::cout << position.y << ", " << window.getSize().y-position.y << " - " << bidule.rectangleTexture().height << "= " << bidule.position().y << std::endl;
 */
         scene.step();
+		
+		
+		std::string texte = texteInstruction;
+			texte += "\npixel x: ";
+			texte += bidule->position().x;
+			texte += "\nmetre x: ";
+			texte += bidule->corps()->GetPosition().x;
+			texte += "\npixel y: ";
+			texte += bidule->position().y;
+			texte += "\nmetre y: ";
+			texte += bidule->corps()->GetPosition().y;
+		instructions.setString( texte );
 		// Draw everything
         scene.dessiner( window );
         /*
 		window.clear(sf::Color(50, 50, 50));
-		window.draw(instructions);
+
 		window.draw( bidule.sprite() );
 		window.draw( bidule2.sprite() );
         */
+		window.draw(instructions);
+		
 		window.display();
         
 	}	

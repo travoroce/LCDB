@@ -41,6 +41,7 @@ public:
 	
     void maj();
 	
+	const b2Body* corps() const;
 /// Implémntation.
 protected:
 	sf::Texture m_texture;
