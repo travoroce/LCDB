@@ -17,12 +17,15 @@ int main()
 {
 
 	/// Box2D.
+    /*
 	// World.
 	b2Vec2 gravity(0.0f, -10.0f); 
 	bool doSleep = true; 
     
 	b2World world(gravity);
     //    world.SetAllowSleeping( doSleep );
+    */
+    /*
 	// Ground.
 	b2BodyDef groundBodyDef; 
         groundBodyDef.position.Set(0.0f, -10.0f);                                                                                                                                          
@@ -32,12 +35,14 @@ int main()
 
 	b2Body* groundBody = world.CreateBody(&groundBodyDef); 
         groundBody->CreateFixture(&groundBox, 0.0f);
+        */
+    /*
 	// Dynamic body.
 	b2BodyDef bodyDef; 
         bodyDef.type = b2_dynamicBody; 
         bodyDef.position.Set(0.0f, 25.0f); 
         b2Body* body = world.CreateBody(&bodyDef); 	
-	
+
 	b2PolygonShape dynamicBox; 
         dynamicBox.SetAsBox(1.0f, 1.0f); 
 	
@@ -45,14 +50,18 @@ int main()
         fixtureDef.shape = &dynamicBox; 
         fixtureDef.density = 1.0f; 
         fixtureDef.friction = 0.3f;
-        
+
 	body->CreateFixture(&fixtureDef); 
+    
+    
+    */
+    /*
 	// simulation.
 	float32 timeStep = 1.0f / 60.0f;
-    
+   
     int32 velocityIterations = 8; 
     int32 positionIterations = 3; 
-    
+    */
     
 	sf::RenderWindow window(sf::VideoMode(600, 400), "Thor Animation");
 	window.setFramerateLimit(60);
@@ -68,7 +77,7 @@ int main()
 
 	/// Bidule.
     // Image.
-	Scene scene;
+	Scene scene( b2Vec2(0.0f, -10.0f) );
 		scene.creerImage( "bidule", "res/bidule2.png" );
 		ptrImage image_bidule = scene.image( "bidule" );
 	
@@ -204,23 +213,30 @@ int main()
 		
         sf::Time time = frameClock.restart();
         // Mise a jour de l'animator et application de l'etat courant de l'animation au sprite.
-
+/*
 		bidule.animer( time );
 		bidule2.animer( time );
-		
+		*/
         // Simulation physique et collisions.
-        world.Step(timeStep, velocityIterations, positionIterations); 
+        //world.Step(timeStep, velocityIterations, positionIterations);
+
+/*        
         b2Vec2 position = body->GetPosition(); 
         float32 angle = body->GetAngle(); 
         bidule.position( sf::Vector2f( 0.0f, (window.getSize().y-position.y)-bidule.rectangleTexture().height ) );
         dynamicBox.SetAsBox( bidule.rectangleTexture().width, bidule.rectangleTexture().height );
         std::cout << position.y << ", " << window.getSize().y-position.y << " - " << bidule.rectangleTexture().height << "= " << bidule.position().y << std::endl;
-
+*/
+        scene.step();
 		// Draw everything
+        scene.dessiner( window );
+        /*
 		window.clear(sf::Color(50, 50, 50));
 		window.draw(instructions);
 		window.draw( bidule.sprite() );
 		window.draw( bidule2.sprite() );
+        */
 		window.display();
+        
 	}	
 }

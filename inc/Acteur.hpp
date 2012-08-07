@@ -7,6 +7,8 @@
 #include <SFML/System.hpp>
 // Thor.
 #include <Thor/Animation.hpp>
+// Box2D.
+#include <Box2D/Box2D.h>
 // Projet.
 #include "Types.hpp"
 
@@ -37,6 +39,7 @@ public:
 	void jouerAnimation( std::string p_nom, bool p_enBoucle );
 	void arreterAnimation();
 	
+    void maj();
 	
 /// Implémntation.
 protected:
@@ -46,6 +49,11 @@ protected:
 	thor::Animator<sf::Sprite, std::string> m_animator;
 	std::unordered_map< std::string, thor::FrameAnimation > m_animations;
 	
-	
+	// Box2D.
+    b2BodyDef       m_bodyDef; 
+    b2PolygonShape  m_dynamicBox; 
+    b2FixtureDef    m_fixtureDef; 
 };
+
+typedef std::shared_ptr< Acteur > ptrActeur;
 #endif// Fin Acteur_HPP.

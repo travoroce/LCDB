@@ -3,14 +3,24 @@
 #include <fstream>
 #include <sstream>
 
-Acteur::Acteur( ptrImage p_image )
+Acteur::Acteur( ptrImage p_image, b2Body p_body )
 	: m_texture()
 	, m_sprite()
+    , m_body( p_body )
 	{
+        // Dynamic body.
+
 		if ( m_texture.loadFromImage( *p_image ) )
 		{
 			m_sprite.setTexture( m_texture );
+            m_dynamicBox.SetAsBox(m_sprite.getTextureRect().width, m_sprite.getTextureRect().height); 
 		}
+
+            m_fixtureDef.shape = &m_dynamicBox; 
+            m_fixtureDef.density = 1.0f; 
+            m_fixtureDef.friction = 0.3f;
+
+        body->CreateFixture(&fixtureDef);  
 	}
 	
 sf::Vector2f Acteur::position() const
@@ -34,6 +44,7 @@ sf::IntRect Acteur::rectangleTexture() const
 void Acteur::rectangleTexture( sf::IntRect p_rectangle )
 	{
 		m_sprite.setTextureRect( p_rectangle );
+        m_dynamicBox.SetAsBox(m_sprite.getTextureRect().width, m_sprite.getTextureRect().height); 
 	}
 	
 
@@ -187,3 +198,13 @@ void Acteur::arreterAnimation()
 	{
 		m_animator.stopAnimation();
 	}
+    
+
+void Acteur::maj()
+    {
+		this->animer( 1/60.0f );
+            b2Vec2 position = m_body->GetPosition(); 
+           // float32 angle = m_body->GetAngle(); 
+            this->position( sf::Vector2f( 0.0f, (400-position.y)-this->rectangleTexture().height ) );
+            dynamicBox.SetAsBox( this->rectangleTexture().width, this->rectangleTexture().height );
+    }
