@@ -41,7 +41,8 @@ int main()
 	b2BodyDef bodyDef; 
         bodyDef.type = b2_dynamicBody; 
         bodyDef.position.Set(0.0f, 25.0f); 
-        b2Body* body = world.CreateBody(&bodyDef); 	
+        
+    b2Body* body = world.CreateBody(&bodyDef); 	
 
 	b2PolygonShape dynamicBox; 
         dynamicBox.SetAsBox(1.0f, 1.0f); 
@@ -78,20 +79,14 @@ int main()
 	/// Bidule.
     // Image.
 	Scene scene( b2Vec2(0.0f, -10.0f) );
-		scene.creerImage( "bidule", "res/bidule2.png" );
-		ptrImage image_bidule = scene.image( "bidule" );
+		scene.creerImage( "bidule_image", "res/bidule2.png" );
 	
-	Acteur bidule( image_bidule );
-		bidule.position( sf::Vector2f( 150.f-32.f, 200.f-128.f ) );
-		bidule.chargerAnimations( "res/bidule2.anim" );
-		//bidule.chargerAnimations( "res/bidule_pinceau.anim" );
-		bidule.animationDefaut( "PoseD", 1.0f );
-
-	Acteur bidule2( image_bidule );
-		bidule2.position( sf::Vector2f( 150.f-32.f+100.f, 200.f-128.f ) );
-		bidule2.chargerAnimations( "res/bidule2.anim" );
-		//bidule.chargerAnimations( "res/bidule_pinceau.anim" );
-		bidule2.animationDefaut( "PoseD", 1.0f );	
+	ptrActeur bidule = scene.creerActeur( "bidule", "bidule_image" );
+		bidule->deplacer( 150.f-32.f, 200.f-128.f );
+        
+		bidule->chargerAnimations( "res/bidule2.anim" );
+		//bidule->chargerAnimations( "res/bidule_pinceau.anim" );
+		bidule->animationDefaut( "PoseD", 1.0f );
 		
 	// Create clock to measure frame time
 	sf::Clock frameClock;
@@ -113,51 +108,49 @@ int main()
 				{	
 					case sf::Keyboard::Num1:
 						suffixe_bidule = "";
-						//bidule.animationDefaut( "PoseD", 1.0f );
 						break;
 					case sf::Keyboard::Num2:
 						suffixe_bidule = "_pinceau";
-						//bidule.animationDefaut( "PoseD_pinceau", 1.0f );
 						break;
 					case sf::Keyboard::RControl:	
                         if ( direction >= 0 )
                         {
-							bidule.jouerAnimation( "AttaqueD_main"+suffixe_bidule, true );
+							bidule->jouerAnimation( "AttaqueD_main"+suffixe_bidule, true );
                         }
                         else
                         {
-							bidule.jouerAnimation( "AttaqueG_main"+suffixe_bidule, true );
+							bidule->jouerAnimation( "AttaqueG_main"+suffixe_bidule, true );
                         }
                         break;
 					case sf::Keyboard::Right:	
-						bidule.jouerAnimation( "MarcheD"+suffixe_bidule, true );
-						bidule.animationDefaut( "PoseD"+suffixe_bidule, 1.0f );
+						bidule->jouerAnimation( "MarcheD"+suffixe_bidule, true );
+						bidule->animationDefaut( "PoseD"+suffixe_bidule, 1.0f );
 						deplacement = true;
                         direction = 1;
                         break;
 					case sf::Keyboard::Left:	
-						bidule.jouerAnimation( "MarcheG"+suffixe_bidule, true );
-						bidule.animationDefaut( "PoseG"+suffixe_bidule, 1.0f );
+						bidule->jouerAnimation( "MarcheG"+suffixe_bidule, true );
+						bidule->animationDefaut( "PoseG"+suffixe_bidule, 1.0f );
 						deplacement = true;
                         direction = -1;
                         break;
 					case sf::Keyboard::Up:	
-						bidule.jouerAnimation( "MarcheH"+suffixe_bidule, true );
+						bidule->jouerAnimation( "MarcheH"+suffixe_bidule, true );
                         break;
 					case sf::Keyboard::Down:	
                         if ( direction >= 0 )
                         {
-							bidule.jouerAnimation( "AccroupiD_down"+suffixe_bidule, false );
-							bidule.animationDefaut( "AccroupiD"+suffixe_bidule, 1.0f );
+							bidule->jouerAnimation( "AccroupiD_down"+suffixe_bidule, false );
+							bidule->animationDefaut( "AccroupiD"+suffixe_bidule, 1.0f );
                         }
                         else
                         {
-							bidule.jouerAnimation( "AccroupiG_down"+suffixe_bidule, false );	
-							bidule.animationDefaut( "AccroupiG"+suffixe_bidule, 1.0f );
+							bidule->jouerAnimation( "AccroupiG_down"+suffixe_bidule, false );	
+							bidule->animationDefaut( "AccroupiG"+suffixe_bidule, 1.0f );
                         }
                         break;
 					case sf::Keyboard::S:		
-						bidule.arreterAnimation();
+						bidule->arreterAnimation();
                         break;
 					case sf::Keyboard::Escape:	return 0;
 				}
@@ -167,19 +160,19 @@ int main()
 				switch (event.key.code)
 				{
 					case sf::Keyboard::RControl:	
-						bidule.arreterAnimation();
+						bidule->arreterAnimation();
                         break;
 					case sf::Keyboard::Right:
                         if ( direction >= 0 )
                         {
-							bidule.arreterAnimation();
+							bidule->arreterAnimation();
                         }
 						deplacement = false;
                         break;
 					case sf::Keyboard::Left:
                         if ( direction < 0 )
                         {
-							bidule.arreterAnimation();
+							bidule->arreterAnimation();
                         }
 						deplacement = false;
                         break;
@@ -188,13 +181,13 @@ int main()
 					case sf::Keyboard::Down:	
                         if ( direction >= 0 )
                         {
-							bidule.jouerAnimation( "AccroupiD_up"+suffixe_bidule, false );
-							bidule.animationDefaut( "PoseD"+suffixe_bidule, 1.0f );
+							bidule->jouerAnimation( "AccroupiD_up"+suffixe_bidule, false );
+							bidule->animationDefaut( "PoseD"+suffixe_bidule, 1.0f );
                         }
                         else
                         {std::cout << "UPG" << std::endl;
-							bidule.jouerAnimation( "AccroupiG_up"+suffixe_bidule, false );	
-							bidule.animationDefaut( "PoseG"+suffixe_bidule, 1.0f );
+							bidule->jouerAnimation( "AccroupiG_up"+suffixe_bidule, false );	
+							bidule->animationDefaut( "PoseG"+suffixe_bidule, 1.0f );
                         }
                         break;
 				}
@@ -208,7 +201,7 @@ int main()
 		float vitesse = 2.0f;
 		if ( deplacement )
 		{
-			bidule.deplacer( direction*vitesse, 0 );
+			bidule->deplacer( direction*vitesse, 0 );
 		}
 		
         sf::Time time = frameClock.restart();

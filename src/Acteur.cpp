@@ -3,24 +3,29 @@
 #include <fstream>
 #include <sstream>
 
-Acteur::Acteur( ptrImage p_image, b2Body p_body )
+Acteur::Acteur( ptrImage p_image, b2World& p_world )
 	: m_texture()
 	, m_sprite()
-    , m_body( p_body )
+    , m_bodyDef()
+    , m_body( p_world.CreateBody(&m_bodyDef) )
+    , m_dynamicBox()
+    , m_fixtureDef()
 	{
         // Dynamic body.
-
+        m_bodyDef.type = b2_dynamicBody; 
+        m_bodyDef.position.Set(0.0f, 0.0f);    
+                    
 		if ( m_texture.loadFromImage( *p_image ) )
 		{
 			m_sprite.setTexture( m_texture );
             m_dynamicBox.SetAsBox(m_sprite.getTextureRect().width, m_sprite.getTextureRect().height); 
 		}
 
-            m_fixtureDef.shape = &m_dynamicBox; 
-            m_fixtureDef.density = 1.0f; 
-            m_fixtureDef.friction = 0.3f;
+        m_fixtureDef.shape = &m_dynamicBox; 
+        m_fixtureDef.density = 1.0f; 
+        m_fixtureDef.friction = 0.3f;
 
-        body->CreateFixture(&fixtureDef);  
+        m_body->CreateFixture(&m_fixtureDef);  
 	}
 	
 sf::Vector2f Acteur::position() const
@@ -29,12 +34,18 @@ sf::Vector2f Acteur::position() const
 	}
 void Acteur::position( sf::Vector2f p_position )
 	{
+        //m_bodyDef.position.Set( p_position.x, p_position.y );
 		m_sprite.setPosition( p_position );
 	}
 		
 void Acteur::deplacer( float p_x, float p_y )
 	{
-		m_sprite.move( p_x, p_y );
+       // m_body->ApplyForceToCenter( b2Vec2( p_x, p_y ) );
+        //m_bodyDef.position.Set( p_x, p_y );
+        m_body->SetTransform( m_body->GetPosition()+b2Vec2( p_x, p_y ), m_body->GetAngle()+0.0f );
+        
+        std::cout<<m_body->GetPosition().x<<std::endl;
+		//m_sprite.move( p_x, p_y );
 	}		
 		
 sf::IntRect Acteur::rectangleTexture() const
@@ -176,6 +187,7 @@ void Acteur::animer( sf::Time p_duree )
 	{
 		m_animator.update( p_duree );
 		m_animator.animate( m_sprite );
+        m_dynamicBox.SetAsBox( this->rectangleTexture().width, this->rectangleTexture().height );
 	}
 	
 void Acteur::animationDefaut( std::string p_nom, float p_duree )
@@ -202,9 +214,9 @@ void Acteur::arreterAnimation()
 
 void Acteur::maj()
     {
-		this->animer( 1/60.0f );
+		this->animer( sf::seconds( 1/60.0f ) );
             b2Vec2 position = m_body->GetPosition(); 
            // float32 angle = m_body->GetAngle(); 
-            this->position( sf::Vector2f( 0.0f, (400-position.y)-this->rectangleTexture().height ) );
-            dynamicBox.SetAsBox( this->rectangleTexture().width, this->rectangleTexture().height );
+            this->position( sf::Vector2f( position.x, (400-position.y)-this->rectangleTexture().height ) );
+
     }

@@ -22,11 +22,11 @@ public:
 
 // Méthodes.
     // Images.
-	void creerImage( std::string p_nom, std::string p_fichier );
+	ptrImage creerImage( std::string p_nom, std::string p_fichier );
 	ptrImage image( std::string p_nom );
     // Acteurs.
-    void creerActeur( std::string p_nom, std::string p_image ); 
-	ptrActeur acteur( std::string p_nom );
+    ptrActeur creerActeur( std::string p_nom, std::string p_image ); 
+	ptrActeur acteur( std::string p_nom ) const;
     
     void step();
     void dessiner( sf::RenderWindow& p_fenetre );

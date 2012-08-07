@@ -6,20 +6,22 @@ Scene::Scene( b2Vec2 p_gravite )
     , m_positionIterations( 3 )
     , m_groundBodyDef()
     , m_groundBox()
-    , m_groundBody( world.CreateBody(&groundBodyDef) )
+    , m_groundBody( m_world.CreateBody(&m_groundBodyDef) )
     {
-        groundBodyDef.position.Set(0.0f, -10.0f);
-        groundBox.SetAsBox(50.0f, 10.0f);
-        groundBody->CreateFixture(&groundBox, 0.0f);
+        m_groundBodyDef.position.Set(0.0f, -10.0f);
+        m_groundBox.SetAsBox(50.0f, 10.0f);
+        m_groundBody->CreateFixture(&m_groundBox, 0.0f);
     }
 
-void Scene::creerImage( std::string p_nom, std::string p_fichier )
+ptrImage Scene::creerImage( std::string p_nom, std::string p_fichier )
 	{
 		if ( m_images.find( p_nom ) == m_images.end() )
 		{
 			m_images[ p_nom ] = std::shared_ptr< sf::Image >( new sf::Image() );
 				m_images[ p_nom ]->loadFromFile( p_fichier );
+            return m_images[ p_nom ];
 		}
+        return nullptr;
 	}
 	
 ptrImage Scene::image( std::string p_nom )
@@ -28,28 +30,30 @@ ptrImage Scene::image( std::string p_nom )
 		{
 			return m_images[ p_nom ];
 		}
+        return nullptr;
 	}
 	
 
-void Scene::creerActeur( std::string p_nom, std::string p_fichier )
+ptrActeur Scene::creerActeur( std::string p_nom, std::string p_texture )
 	{
-		if ( m_Acteurs.find( p_nom ) == m_Acteurs.end() )
+		if ( m_acteurs.find( p_nom ) == m_acteurs.end() )
 		{
-			m_Acteurs[ p_nom ] = std::shared_ptr< sf::Acteur >( new sf::Acteur() );
-				m_Acteurs[ p_nom ]->loadFromFile( p_fichier );
-
-            b2Body* body = world.CreateBody(&bodyDef); 
-            bodyDef.type = b2_dynamicBody; 
-            bodyDef.position.Set(0.0f, 25.0f); 	
+            if ( this->image( p_texture ) )
+            {
+                m_acteurs[ p_nom ] = std::shared_ptr< Acteur >( new Acteur( this->image( p_texture ), m_world ) );
+                return m_acteurs[ p_nom ];
+            }
 		}
+        return nullptr;
 	}
 	
-ptrActeur Scene::Acteur( std::string p_nom )
+ptrActeur Scene::acteur( std::string p_nom ) const
 	{
-		if ( m_Acteurs.find( p_nom ) != m_Acteurs.end() )
+		if ( m_acteurs.find( p_nom ) != m_acteurs.end() )
 		{
-			return m_Acteurs[ p_nom ];
+			return  m_acteurs.find( p_nom )->second;
 		}
+        return nullptr;
 	}
 	
 void Scene::step()
@@ -58,7 +62,7 @@ void Scene::step()
 
         for ( auto acteur : m_acteurs )
         {
-            acteur.maj();
+            acteur.second->maj();
         }
     }
     
@@ -72,7 +76,7 @@ void Scene::dessiner( sf::RenderWindow& p_fenetre )
         
         for ( auto acteur : m_acteurs )
         {
-            p_fenetre.draw( acteur.sprite() );
+            p_fenetre.draw( acteur.second->sprite() );
         }
         
     }

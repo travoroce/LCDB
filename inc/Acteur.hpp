@@ -16,7 +16,7 @@ class Acteur
 {
 /// Interface.
 public:
-	Acteur( ptrImage p_image );
+	Acteur( ptrImage p_image, b2World& p_world );
 
 	sf::Vector2f position() const;
 	void position( sf::Vector2f p_position );
@@ -51,6 +51,7 @@ protected:
 	
 	// Box2D.
     b2BodyDef       m_bodyDef; 
+    b2Body*         m_body;
     b2PolygonShape  m_dynamicBox; 
     b2FixtureDef    m_fixtureDef; 
 };
