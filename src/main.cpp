@@ -2,6 +2,7 @@
 /// En-têtes.
 // systeme.
 #include <iostream>
+#include <sstream>
 #include <unordered_map>
 // Box2D.
 #include <Box2D/Box2D.h>
@@ -10,12 +11,13 @@
 // SFML.
 #include <SFML/Graphics.hpp>
 // Projet.
+#include "Types.hpp"
 #include "Scene.hpp"
 #include "Acteur.hpp"
 
+
 int main()
 {
-
 	/// Box2D.
     /*
 	// World.
@@ -65,29 +67,30 @@ int main()
     */
     
 	sf::RenderWindow window(sf::VideoMode(600, 400), "Thor Animation");
+
 	window.setFramerateLimit(60);
 	window.setKeyRepeatEnabled(false);
 
 	// Instruction text
 	sf::Font font;
-		font.loadFromFile( "res/UnZialish.ttf" );
+	//	font.loadFromFile( "res/UnZialish.ttf" );
+		font.loadFromFile( "res/ProFontWindows.ttf" );
+	//	font.loadFromFile( "res/profont-x11/ProFont_r400-29.pcf" );
 		
 	std::string	texteInstruction = "Droite/Gauche:  Marche droite/gauche\n"
 								   "Bas: s'accroupir\n"
 								   "Echap:  Quit";
 	sf::Text instructions( texteInstruction, font, 30);
-		
-
-	instructions.setCharacterSize(12);
-	instructions.setColor(sf::Color::White);
+		instructions.setColor( sf::Color::Red );
+        instructions.setCharacterSize(12);
 
 	/// Bidule.
     // Image.
 	Scene scene( b2Vec2(0.0f, -10.0f) );
 		scene.creerImage( "bidule_image", "res/bidule2.png" );
 	
-	ptrActeur bidule = scene.creerActeur( "bidule", "bidule_image" );
-		bidule->deplacer( 150.f-32.f, 200.f-128.f );
+	ptrActeur bidule = scene.creerActeur( "bidule", "bidule_image", sf::Vector2f( 25.0f, 25.0f ) );
+		//bidule->deplacer( 150.f-32.f, 200.f-128.f );
         
 		bidule->chargerAnimations( "res/bidule2.anim" );
 		//bidule->chargerAnimations( "res/bidule_pinceau.anim" );
@@ -204,7 +207,7 @@ int main()
 		float vitesse = 2.0f;
 		if ( deplacement )
 		{
-			bidule->deplacer( direction*vitesse, 0 );
+			//bidule->deplacer( direction*vitesse, 0 );
 		}
 		
         sf::Time time = frameClock.restart();
@@ -226,16 +229,21 @@ int main()
         scene.step();
 		
 		
-		std::string texte = texteInstruction;
-			texte += "\npixel x: ";
-			texte += bidule->position().x;
-			texte += "\nmetre x: ";
-			texte += bidule->corps()->GetPosition().x;
-			texte += "\npixel y: ";
-			texte += bidule->position().y;
-			texte += "\nmetre y: ";
-			texte += bidule->corps()->GetPosition().y;
-		instructions.setString( texte );
+		std::ostringstream texte;
+            texte << texteInstruction;
+			texte << "\nsprite x: ";
+			texte << bidule->position().x;
+			texte << "\nsprite y: ";
+			texte << 400-(bidule->position().y+bidule->rectangleTexture().height);
+			texte << "\nbody x: ";
+			texte << bidule->corps()->GetPosition().x;
+			texte << "\nbody y: ";
+			texte << bidule->corps()->GetPosition().y;
+			texte << "\nsol x: ";
+			texte << scene.corps()->GetPosition().x;
+			texte << "\nsol y: ";
+			texte << scene.corps()->GetPosition().y;
+		instructions.setString( texte.str() );
 		// Draw everything
         scene.dessiner( window );
         /*

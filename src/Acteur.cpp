@@ -3,22 +3,29 @@
 #include <fstream>
 #include <sstream>
 
-Acteur::Acteur( ptrImage p_image, b2World& p_world )
+Acteur::Acteur( ptrImage p_image, b2World& p_world, b2Vec2 p_position )
 	: m_texture()
 	, m_sprite()
-    , m_bodyDef()
-    , m_body( p_world.CreateBody(&m_bodyDef) )
+    , m_body( nullptr )
     , m_dynamicBox()
     , m_fixtureDef()
+    , m_aabb( sf::Vector2f(1.0f, 1.0f) )
 	{
         // Dynamic body.
-        m_bodyDef.type = b2_dynamicBody; 
-        m_bodyDef.position.Set(0.0f, 0.0f);    
-                    
+        b2BodyDef bodyDef;
+        bodyDef.type = b2_dynamicBody; 
+        bodyDef.position.Set( MetreParPixels(p_position.x), MetreParPixels(p_position.y) );    
+        bodyDef.allowSleep = true; 
+        bodyDef.awake = true;
+        bodyDef.fixedRotation = true;
+        
+        m_body = p_world.CreateBody(&bodyDef);
+        m_sprite.setPosition( sf::Vector2f( PixelParMetres(p_position.x), (400-this->rectangleTexture().height+PixelParMetres(p_position.y) ) ) );
 		if ( m_texture.loadFromImage( *p_image ) )
 		{
 			m_sprite.setTexture( m_texture );
-            m_dynamicBox.SetAsBox(m_sprite.getTextureRect().width, m_sprite.getTextureRect().height); 
+            m_dynamicBox.SetAsBox( MetreParPixels(m_sprite.getTextureRect().width), MetreParPixels(m_sprite.getTextureRect().height) ); 
+            m_aabb.setSize( sf::Vector2f( m_sprite.getTextureRect().width, m_sprite.getTextureRect().height) );
 		}
 
         m_fixtureDef.shape = &m_dynamicBox; 
@@ -26,6 +33,10 @@ Acteur::Acteur( ptrImage p_image, b2World& p_world )
         m_fixtureDef.friction = 0.3f;
 
         m_body->CreateFixture(&m_fixtureDef);  
+        
+        m_aabb.setFillColor( sf::Color::Transparent );
+        m_aabb.setOutlineColor( sf::Color::Blue );
+        m_aabb.setOutlineThickness( 2.0f );
 	}
 	
 sf::Vector2f Acteur::position() const
@@ -42,9 +53,10 @@ void Acteur::deplacer( float p_x, float p_y )
 	{
        // m_body->ApplyForceToCenter( b2Vec2( p_x, p_y ) );
         //m_bodyDef.position.Set( p_x, p_y );
-        m_body->SetTransform( m_body->GetPosition()+b2Vec2( PixelParMetres(p_x), PixelParMetres(p_y) ), m_body->GetAngle()+0.0f );
-        
-        std::cout<< PixelParMetres(m_body->GetPosition().x) << ", " << m_body->GetPosition().x<<std::endl;
+        //m_body->SetTransform( m_body->GetPosition()+b2Vec2( PixelParMetres(p_x), PixelParMetres(p_y) ), m_body->GetAngle()+0.0f );
+
+        //m_body->SetLinearVelocity( b2Vec2(p_x,p_y) );
+        //std::cout<< m_body->GetPosition().x << ", " << m_body->GetPosition().x<<std::endl;
 		//m_sprite.move( p_x, p_y );
 	}		
 		
@@ -55,7 +67,7 @@ sf::IntRect Acteur::rectangleTexture() const
 void Acteur::rectangleTexture( sf::IntRect p_rectangle )
 	{
 		m_sprite.setTextureRect( p_rectangle );
-        m_dynamicBox.SetAsBox(PixelParMetres(m_sprite.getTextureRect().width), PixelParMetres(m_sprite.getTextureRect().height)); 
+        m_dynamicBox.SetAsBox(m_sprite.getTextureRect().width, m_sprite.getTextureRect().height); 
 	}
 	
 
@@ -187,7 +199,7 @@ void Acteur::animer( sf::Time p_duree )
 	{
 		m_animator.update( p_duree );
 		m_animator.animate( m_sprite );
-        m_dynamicBox.SetAsBox( PixelParMetres(this->rectangleTexture().width), PixelParMetres(this->rectangleTexture().height) );
+        m_dynamicBox.SetAsBox( this->rectangleTexture().width, this->rectangleTexture().height );
 	}
 	
 void Acteur::animationDefaut( std::string p_nom, float p_duree )
@@ -217,10 +229,23 @@ void Acteur::maj()
 		this->animer( sf::seconds( 1/60.0f ) );
             b2Vec2 position = m_body->GetPosition(); 
            // float32 angle = m_body->GetAngle(); 
-            this->position( sf::Vector2f( position.x, (400-position.y)-PixelParMetres(this->rectangleTexture().height) ) );
-
+            this->position( sf::Vector2f( PixelParMetres(position.x), (400-this->rectangleTexture().height+PixelParMetres(position.y) ) ) );
+        //m_body->SetLinearVelocity(b2Vec2(0,0));
+        
+        
+        m_aabb.setSize( sf::Vector2f( m_sprite.getTextureRect().width, m_sprite.getTextureRect().height ) );
+        
+        //m_aabb.setSize( sf::Vector2f( m_body->GetSize().x,  m_body->GetSize().y ) );
+        m_aabb.setPosition( this->position() ); 
+        
     }
 	
+void Acteur::dessiner( sf::RenderWindow& p_fenetre )
+    {
+        p_fenetre.draw( m_sprite );
+        p_fenetre.draw( m_aabb );
+    }
+    
 const b2Body* Acteur::corps() const
 	{
 		return m_body;

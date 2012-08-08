@@ -16,7 +16,7 @@ class Acteur
 {
 /// Interface.
 public:
-	Acteur( ptrImage p_image, b2World& p_world );
+	Acteur( ptrImage p_image, b2World& p_world, b2Vec2 p_position = b2Vec2( 0.0f,0.0f ) );
 
 	sf::Vector2f position() const;
 	void position( sf::Vector2f p_position );
@@ -40,7 +40,7 @@ public:
 	void arreterAnimation();
 	
     void maj();
-	
+	void dessiner( sf::RenderWindow& p_fenetre );
 	const b2Body* corps() const;
 /// Implémntation.
 protected:
@@ -51,10 +51,13 @@ protected:
 	std::unordered_map< std::string, thor::FrameAnimation > m_animations;
 	
 	// Box2D.
-    b2BodyDef       m_bodyDef; 
     b2Body*         m_body;
     b2PolygonShape  m_dynamicBox; 
     b2FixtureDef    m_fixtureDef; 
+    
+    sf::RectangleShape m_aabb;
+    
+    
 };
 
 typedef std::shared_ptr< Acteur > ptrActeur;

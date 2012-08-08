@@ -25,11 +25,12 @@ public:
 	ptrImage creerImage( std::string p_nom, std::string p_fichier );
 	ptrImage image( std::string p_nom );
     // Acteurs.
-    ptrActeur creerActeur( std::string p_nom, std::string p_image ); 
+    ptrActeur creerActeur( std::string p_nom, std::string p_image, sf::Vector2f p_position ); 
 	ptrActeur acteur( std::string p_nom ) const;
     
     void step();
     void dessiner( sf::RenderWindow& p_fenetre );
+    const b2Body* corps() const;
     
 /// Implémentation.
 protected:
@@ -42,10 +43,11 @@ protected:
     float32 m_timeStep;
     int32 m_velocityIterations; 
     int32 m_positionIterations; 
-    
-	b2BodyDef       m_groundBodyDef;                                                                                                                                        
+                                                                                                                                          
 	b2PolygonShape  m_groundBox; 
-	b2Body*         m_groundBody; 
+	b2Body*         m_groundBody;
+    
+    sf::RectangleShape m_aabb;
 };
 
 
