@@ -44,23 +44,23 @@ animation=AccroupiD_down
     image
 		d=1.0
 		x=0
-		y=512
+		y=564
 		l=128
-		h=256
+		h=204
     finImage
     image
 		d=1.0
 		x=128
-		y=512
+		y=604
 		l=128
-		h=256
+		h=164
     finImage
     image
 		d=1.0
 		x=256
-		y=512
+		y=620
 		l=128
-		h=256
+		h=148
     finImage
 finAnimation
 animation=AccroupiD_up
@@ -68,23 +68,23 @@ animation=AccroupiD_up
     image
 		d=1.0
 		x=256
-		y=512
+		y=620
 		l=128
-		h=256
+		h=148
     finImage
     image
 		d=1.0
 		x=128
-		y=512
+		y=604
 		l=128
-		h=256
+		h=164
     finImage
     image
 		d=1.0
 		x=0
-		y=512
+		y=564
 		l=128
-		h=256
+		h=204
     finImage
 finAnimation
 animation=AccroupiD
@@ -92,9 +92,9 @@ animation=AccroupiD
     image
 		d=1.0
 		x=256
-		y=512
+		y=620
 		l=128
-		h=256
+		h=148
     finImage
 finAnimation
 animation=AttaqueD_main

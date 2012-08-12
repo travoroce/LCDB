@@ -4,8 +4,6 @@
 #include <iostream>
 #include <sstream>
 #include <unordered_map>
-// Box2D.
-#include <Box2D/Box2D.h>
 // Thor.
 #include <Thor/Animation.hpp>
 // SFML.
@@ -18,53 +16,7 @@
 
 int main()
 {
-	/// Box2D.
-    /*
-	// World.
-	b2Vec2 gravity(0.0f, -10.0f); 
-	bool doSleep = true; 
-    
-	b2World world(gravity);
-    //    world.SetAllowSleeping( doSleep );
-    */
-    /*
-	// Ground.
-	b2BodyDef groundBodyDef; 
-        groundBodyDef.position.Set(0.0f, -10.0f);                                                                                                                                          
 
-	b2PolygonShape groundBox; 
-        groundBox.SetAsBox(50.0f, 10.0f); 
-
-	b2Body* groundBody = world.CreateBody(&groundBodyDef); 
-        groundBody->CreateFixture(&groundBox, 0.0f);
-        */
-    /*
-	// Dynamic body.
-	b2BodyDef bodyDef; 
-        bodyDef.type = b2_dynamicBody; 
-        bodyDef.position.Set(0.0f, 25.0f); 
-        
-    b2Body* body = world.CreateBody(&bodyDef); 	
-
-	b2PolygonShape dynamicBox; 
-        dynamicBox.SetAsBox(1.0f, 1.0f); 
-	
-	b2FixtureDef fixtureDef; 
-        fixtureDef.shape = &dynamicBox; 
-        fixtureDef.density = 1.0f; 
-        fixtureDef.friction = 0.3f;
-
-	body->CreateFixture(&fixtureDef); 
-    
-    
-    */
-    /*
-	// simulation.
-	float32 timeStep = 1.0f / 60.0f;
-   
-    int32 velocityIterations = 8; 
-    int32 positionIterations = 3; 
-    */
     
 	sf::RenderWindow window(sf::VideoMode(600, 400), "Thor Animation");
 
@@ -86,16 +38,20 @@ int main()
 
 	/// Bidule.
     // Image.
-	Scene scene( b2Vec2(0.0f, -10.0f) );
+	Scene scene;
 		scene.creerImage( "bidule_image", "res/bidule2.png" );
 	
-	ptrActeur bidule = scene.creerActeur( "bidule", "bidule_image", sf::Vector2f( 25.0f, 25.0f ) );
+	ptrActeur bidule = scene.creerActeur( "bidule", "bidule_image", sf::Vector2f( 100.0f, 400.0f ) );
 		//bidule->deplacer( 150.f-32.f, 200.f-128.f );
-        
 		bidule->chargerAnimations( "res/bidule2.anim" );
 		//bidule->chargerAnimations( "res/bidule_pinceau.anim" );
 		bidule->animationDefaut( "PoseD", 1.0f );
 		
+	ptrActeur bidule2 = scene.creerActeur( "bidule2", "bidule_image", sf::Vector2f( 250.0f, 400.0f ) );
+		//bidule->deplacer( 150.f-32.f, 200.f-128.f );
+		bidule2->chargerAnimations( "res/bidule2.anim" );
+		//bidule->chargerAnimations( "res/bidule_pinceau.anim" );
+		bidule2->animationDefaut( "PoseD", 1.0f );
 	// Create clock to measure frame time
 	sf::Clock frameClock;
     int direction = 0;
@@ -174,15 +130,15 @@ int main()
                         if ( direction >= 0 )
                         {
 							bidule->arreterAnimation();
+							deplacement = false;
                         }
-						deplacement = false;
                         break;
 					case sf::Keyboard::Left:
                         if ( direction < 0 )
                         {
 							bidule->arreterAnimation();
+							deplacement = false;
                         }
-						deplacement = false;
                         break;
 					case sf::Keyboard::Down:	
                         if ( direction >= 0 )
@@ -207,51 +163,26 @@ int main()
 		float vitesse = 2.0f;
 		if ( deplacement )
 		{
-			//bidule->deplacer( direction*vitesse, 0 );
+			bidule->deplacer( direction*vitesse, 0 );
 		}
 		
         sf::Time time = frameClock.restart();
         // Mise a jour de l'animator et application de l'etat courant de l'animation au sprite.
-/*
-		bidule.animer( time );
-		bidule2.animer( time );
-		*/
-        // Simulation physique et collisions.
-        //world.Step(timeStep, velocityIterations, positionIterations);
 
-/*        
-        b2Vec2 position = body->GetPosition(); 
-        float32 angle = body->GetAngle(); 
-        bidule.position( sf::Vector2f( 0.0f, (window.getSize().y-position.y)-bidule.rectangleTexture().height ) );
-        dynamicBox.SetAsBox( bidule.rectangleTexture().width, bidule.rectangleTexture().height );
-        std::cout << position.y << ", " << window.getSize().y-position.y << " - " << bidule.rectangleTexture().height << "= " << bidule.position().y << std::endl;
-*/
         scene.step();
 		
 		
 		std::ostringstream texte;
-            texte << texteInstruction;
-			texte << "\nsprite x: ";
-			texte << bidule->position().x;
-			texte << "\nsprite y: ";
-			texte << 400-(bidule->position().y+bidule->rectangleTexture().height);
-			texte << "\nbody x: ";
-			texte << bidule->corps()->GetPosition().x;
-			texte << "\nbody y: ";
-			texte << bidule->corps()->GetPosition().y;
-			texte << "\nsol x: ";
-			texte << scene.corps()->GetPosition().x;
-			texte << "\nsol y: ";
-			texte << scene.corps()->GetPosition().y;
+            texte << texteInstruction << std::endl;
+			texte << "sprite x: ";
+			texte << bidule->position().x << std::endl;
+			texte << "sprite y: ";
+			texte << bidule->position().y << std::endl;
+
 		instructions.setString( texte.str() );
 		// Draw everything
         scene.dessiner( window );
-        /*
-		window.clear(sf::Color(50, 50, 50));
 
-		window.draw( bidule.sprite() );
-		window.draw( bidule2.sprite() );
-        */
 		window.draw(instructions);
 		
 		window.display();
