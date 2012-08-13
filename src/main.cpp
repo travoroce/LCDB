@@ -18,7 +18,7 @@ int main()
 {
 
     
-	sf::RenderWindow window(sf::VideoMode(600, 400), "Thor Animation");
+	sf::RenderWindow window(sf::VideoMode(600, 400), "FPS: 0");
 
 	window.setFramerateLimit(60);
 	window.setKeyRepeatEnabled(false);
@@ -53,7 +53,10 @@ int main()
 		//bidule->chargerAnimations( "res/bidule_pinceau.anim" );
 		bidule2->animationDefaut( "PoseD", 1.0f );
 	// Create clock to measure frame time
+	
 	sf::Clock frameClock;
+	int fps = 0;
+	
     int direction = 0;
 	bool deplacement = false;
     std::string suffixe_bidule = "";
@@ -166,9 +169,16 @@ int main()
 			bidule->deplacer( direction*vitesse, 0 );
 		}
 		
-        sf::Time time = frameClock.restart();
-        // Mise a jour de l'animator et application de l'etat courant de l'animation au sprite.
-
+		++fps;
+		if ( frameClock.getElapsedTime().asSeconds() > 1.0f )
+		{
+			sf::Time time = frameClock.restart();
+			// Mise a jour de l'animator et application de l'etat courant de l'animation au sprite.
+			std::ostringstream titre;
+				titre << "FPS: " << fps;
+			window.setTitle( titre.str() );
+			fps = 0;
+		}
         scene.step();
 		
 		

@@ -51,6 +51,8 @@ ptrActeur Scene::acteur( std::string p_nom ) const
 void Scene::step()
     {
 		this->testCollisions();
+		this->effectuerCollision();
+		
         for ( auto acteur : m_acteurs )
         {
             acteur.second->maj();
@@ -74,13 +76,36 @@ void Scene::testCollisions()
 						
 					sf::FloatRect acteur2_aabb = acteur2.second->aabb().getGlobalBounds();
 					if( acteur_aabb.intersects( acteur2_aabb ) )
-					{std::cout << acteur_aabb.intersects( acteur2_aabb ) << std::endl;
+					{
 						m_contacts[ acteur_nom ].insert( acteur2_nom );
 						acteur.second->aabb().setOutlineColor( sf::Color::Red );
 					}
 				}
 			}
         }	
+	}
+	
+void Scene::effectuerCollision()
+	{
+		for ( auto acteur1 : m_acteurs )
+		{
+			ptrActeur acteur1_ptr = acteur1.second;
+			std::string acteur1_nom = acteur1.first;
+		
+			if ( m_contacts.find( acteur1_nom ) != m_contacts.end() )
+			{
+				for ( auto acteur2_nom : m_contacts[ acteur1_nom ] )
+				{
+					if ( m_acteurs.find( acteur2_nom ) != m_acteurs.end() )
+					{
+						ptrActeur acteur2_ptr = m_acteurs.find( acteur2_nom )->second;
+						
+						
+						
+					}
+				}
+			}
+		}
 	}
 	
 void Scene::dessiner( sf::RenderWindow& p_fenetre )

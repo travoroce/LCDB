@@ -30,7 +30,8 @@ public:
     void step();
 	
 	void testCollisions();
-
+	void effectuerCollision();
+	
     void dessiner( sf::RenderWindow& p_fenetre );
     
 /// Implémentation.
